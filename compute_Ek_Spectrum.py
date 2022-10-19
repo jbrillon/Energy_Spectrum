@@ -28,8 +28,9 @@ data_path = "./"
 # file = input("Desired file name? ") # enter velocityfld_ascii.dat for demo.
 file = "velocityfld_ascii.dat"
 # file = "../DHIT-Flow-Setup/outputs/p5nel4modes4/velocity_equidistant_nodes.fld"
-file = "../DHIT-Flow-Setup/outputs/p5nel4modes31/velocity.fld"
-specfile = "../DHIT-Flow-Setup/outputs/p5nel4modes31/spec.tec"
+file = "../TurboGenPY/vel_cbc_24.24.24_3000_modes.txt"
+input_spectra_file = "../TurboGenPY/cbc_spectrum.txt"
+specfile = "../TurboGenPY/tkespec_cbc_24.24.24_3000_modes.txt"
 
 # -----------------------------------------------------------------
 #  TGV QUANTS
@@ -62,7 +63,8 @@ print ("\nReading files...localtime",localtime)
 if(file == "velocityfld_ascii.dat"):
     n_skiprows = 2
 else:
-    n_skiprows = 0
+    # n_skiprows = 0
+    n_skiprows = 1
 data = np.loadtxt(data_path+file, skiprows=n_skiprows)
 
 print ("shape of data = ",data.shape)
@@ -138,16 +140,22 @@ plt.xlabel(r"k (wavenumber)")
 plt.ylabel(r"TKE of the k$^{th}$ wavenumber")
 
 if(file != "velocityfld_ascii.dat"):
-    spectra = np.loadtxt("../DHIT-Flow-Setup/energy.prf",skiprows=1,dtype=np.float64)
+    spectra = np.loadtxt(input_spectra_file,skiprows=0,max_rows=21,usecols=(0,1),dtype=np.float64)
+    spectra[:,0] *= 100.0
+    spectra[:,1] *= (1.0e-6)
     plt.loglog(spectra[:,0],spectra[:,1],'bo')
-    spectra = np.loadtxt(specfile,skiprows=0,dtype=np.float64)
+    spectra = np.loadtxt(specfile,skiprows=1,dtype=np.float64)
     plt.loglog(spectra[:,0],spectra[:,1],'g-')
     # labels.append("$E(k)_{1}\\longrightarrow (u,v,w)$")
     # prf = 1.0*spectra[:,1]
 
 realsize = len(np.fft.rfft(U[:,0,0]))
-plt.loglog(np.arange(0,realsize),((EK_avsphr[0:realsize] )),'k-.')
-plt.loglog(np.arange(realsize,len(EK_avsphr),1),((EK_avsphr[realsize:] )),'r--')
+# plt.loglog(np.arange(0,realsize),((EK_avsphr[0:realsize] )),'k-.')
+# plt.loglog(np.arange(realsize,len(EK_avsphr),1),((EK_avsphr[realsize:] )),'r--')
+
+# scaling -- not sure why this is needed? data read in is in metres and seconds, plotted data is non-dimensional
+plt.loglog(np.arange(0,realsize)*10,((EK_avsphr[0:realsize] ))/10.0,'k-.')
+plt.loglog(np.arange(realsize,len(EK_avsphr),1)*10,((EK_avsphr[realsize:] ))/10.0,'r--')
 
 axes = plt.gca()
 # axes.set_ylim([10**-25,5**-1])
@@ -155,8 +163,9 @@ if(file == "velocityfld_ascii.dat"):
     axes.set_ylim([1e-8,1e-1])
     axes.set_xlim([2,80])
 else:
-    axes.set_ylim([1e-4,1e1])
-    axes.set_xlim([1e0,1e2])
+    # axes.set_ylim([1e-4,1e1])
+    # axes.set_xlim([1e0,1e2])
+    print(" ")
 
 print("Real      Kmax    = ",realsize)
 print("Spherical Kmax    = ",len(EK_avsphr))
