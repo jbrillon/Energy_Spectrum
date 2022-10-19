@@ -21,21 +21,28 @@ import time
 from math import sqrt
 
 # -----------------------------------------------------------------
+#  INPUT FILE PARAMS
+# -----------------------------------------------------------------
+
+data_path = "./"
+# file = input("Desired file name? ") # enter velocityfld_ascii.dat for demo.
+file = "velocityfld_ascii.dat"
+# file = "../DHIT-Flow-Setup/outputs/p5nel4modes4/velocity_equidistant_nodes.fld"
+file = "../DHIT-Flow-Setup/outputs/p5nel4modes31/velocity.fld"
+specfile = "../DHIT-Flow-Setup/outputs/p5nel4modes31/spec.tec"
+
+# -----------------------------------------------------------------
 #  TGV QUANTS
 # -----------------------------------------------------------------
 
 # These quantities are to account for particular non-dimensionalizations of state variables.
 # In general U0=1.
-c  = sqrt(1.4);
-Ma = 0.1;
-U0 = Ma*c; 
-
-# -----------------------------------------------------------------
-#  INPUT FILE PARAMS
-# -----------------------------------------------------------------
-
-data_path = "./"
-file = input("Desired file name? ") # enter velocityfld_ascii.dat for demo.
+if(file == "velocityfld_ascii.dat"):
+    c  = sqrt(1.4);
+    Ma = 0.1;
+    U0 = Ma*c; 
+else:
+    U0 = 1.0
 
 # -----------------------------------------------------------------
 #  OUTOUT FILE PARAMS
@@ -52,7 +59,11 @@ localtime = time.asctime( time.localtime(time.time()) )
 print ("\nReading files...localtime",localtime)
 
 #load the ascii file
-data     = np.loadtxt(data_path+file, skiprows=2)
+if(file == "velocityfld_ascii.dat"):
+    n_skiprows = 2
+else:
+    n_skiprows = 0
+data = np.loadtxt(data_path+file, skiprows=n_skiprows)
 
 print ("shape of data = ",data.shape)
 
@@ -106,31 +117,46 @@ print ("sphere radius =",box_radius )
 print ("centerbox     =",centerx)
 print ("centerboy     =",centery)
 print ("centerboz     =",centerz,"\n" )
-	            
+                
 EK_U_avsphr = np.zeros(box_radius,)+eps ## size of the radius
 EK_V_avsphr = np.zeros(box_radius,)+eps ## size of the radius
 EK_W_avsphr = np.zeros(box_radius,)+eps ## size of the radius
 
 for i in range(box_sidex):
-	for j in range(box_sidey):
-		for k in range(box_sidez):            
-			wn =  int(np.round(np.sqrt((i-centerx)**2+(j-centery)**2+(k-centerz)**2)))
-			EK_U_avsphr[wn] = EK_U_avsphr [wn] + EK_U [i,j,k]
-			EK_V_avsphr[wn] = EK_V_avsphr [wn] + EK_V [i,j,k]    
-			EK_W_avsphr[wn] = EK_W_avsphr [wn] + EK_W [i,j,k]        
+    for j in range(box_sidey):
+        for k in range(box_sidez):            
+            wn =  int(np.round(np.sqrt((i-centerx)**2+(j-centery)**2+(k-centerz)**2)))
+            EK_U_avsphr[wn] = EK_U_avsphr [wn] + EK_U [i,j,k]
+            EK_V_avsphr[wn] = EK_V_avsphr [wn] + EK_V [i,j,k]    
+            EK_W_avsphr[wn] = EK_W_avsphr [wn] + EK_W [i,j,k]        
 
 EK_avsphr = 0.5*(EK_U_avsphr + EK_V_avsphr + EK_W_avsphr)
-	                      
+                          
 fig = plt.figure()
 plt.title("Kinetic Energy Spectrum")
 plt.xlabel(r"k (wavenumber)")
 plt.ylabel(r"TKE of the k$^{th}$ wavenumber")
 
+if(file != "velocityfld_ascii.dat"):
+    spectra = np.loadtxt("../DHIT-Flow-Setup/energy.prf",skiprows=1,dtype=np.float64)
+    plt.loglog(spectra[:,0],spectra[:,1],'bo')
+    spectra = np.loadtxt(specfile,skiprows=0,dtype=np.float64)
+    plt.loglog(spectra[:,0],spectra[:,1],'g-')
+    # labels.append("$E(k)_{1}\\longrightarrow (u,v,w)$")
+    # prf = 1.0*spectra[:,1]
+
 realsize = len(np.fft.rfft(U[:,0,0]))
-plt.loglog(np.arange(0,realsize),((EK_avsphr[0:realsize] )),'k')
-plt.loglog(np.arange(realsize,len(EK_avsphr),1),((EK_avsphr[realsize:] )),'k--')
+plt.loglog(np.arange(0,realsize),((EK_avsphr[0:realsize] )),'k-.')
+plt.loglog(np.arange(realsize,len(EK_avsphr),1),((EK_avsphr[realsize:] )),'r--')
+
 axes = plt.gca()
-axes.set_ylim([10**-25,5**-1])
+# axes.set_ylim([10**-25,5**-1])
+if(file == "velocityfld_ascii.dat"):
+    axes.set_ylim([1e-8,1e-1])
+    axes.set_xlim([2,80])
+else:
+    axes.set_ylim([1e-4,1e1])
+    axes.set_xlim([1e0,1e2])
 
 print("Real      Kmax    = ",realsize)
 print("Spherical Kmax    = ",len(EK_avsphr))
@@ -159,6 +185,6 @@ dataout[:,1] = EK_avsphr[0:len(dataout)]
 
 np.savetxt(Figs_Path+Fig_file_name+'.dat',dataout)
 fig.savefig(Figs_Path+Fig_file_name+'.pdf')
-plt.show()
+# plt.show()
 
 
