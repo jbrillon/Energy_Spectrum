@@ -159,11 +159,8 @@ def compute_Ek_spectrum(velocity_field=[],reference_velocict=1.0):
     # dataout      = np.zeros((box_radius,2)) 
     # dataout[:,0] = np.arange(0,len(dataout))
     # dataout[:,1] = EK_avsphr[0:len(dataout)]
-    computed_spectra_from_velocity = np.zeros((realsize,2))
-    computed_spectra_from_velocity[:,0] = np.arange(0,realsize)
-    computed_spectra_from_velocity[:,1] = ((EK_avsphr[0:realsize] ))
 
-    return computed_spectra_from_velocity
+    return [np.arange(0,realsize),EK_avsphr[0:realsize]]
     # np.savetxt("computed_spectra.txt",dataout)
 
     # np.savetxt(Figs_Path+Fig_file_name+'.dat',dataout)
