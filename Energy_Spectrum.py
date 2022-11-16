@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 import time
 from math import sqrt
 
-def compute_Ek_spectrum(velocity_field=[],reference_velocict=1.0):
-    U0 = 1.0*reference_velocicty # to non-dimensionalize the inputted velocity field
+def compute_Ek_spectrum(velocity_field=[],reference_velocity=1.0):
+    U0 = 1.0*reference_velocity # to non-dimensionalize the inputted velocity field
     
     #-----------------------------------------------------
     # Safeguard for when empty data is passed
