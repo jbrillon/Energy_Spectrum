@@ -54,7 +54,7 @@ def compute_Ek_spectrum(velocity_field=[],reference_velocity=1.0):
     #     n_skiprows = 0
     # data = np.loadtxt(data_path+file, skiprows=n_skiprows)
 
-    print ("shape of data = ",data.shape)
+    print ("shape of data = ",U.shape)
 
     # localtime = time.asctime( time.localtime(time.time()) )
     # print ("Reading files...localtime",localtime, "- END\n")
