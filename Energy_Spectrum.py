@@ -152,6 +152,10 @@ def compute_Ek_spectrum(velocity_field=[],reference_velocity=1.0):
     localtime = time.asctime( time.localtime(time.time()) )
     print ("Computing spectrum... ",localtime, "- END \n")
 
+    # dataout = np.zeros((realsize,2),dtype=np.float64)
+    # dataout[:,0] = np.arange(0,realsize)
+    # dataout[:,1] = EK_avsphr[0:realsize]
+
     # -----------------------------------------------------------------
     #  OUTPUT/PLOTS
     # -----------------------------------------------------------------
