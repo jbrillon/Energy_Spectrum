@@ -28,7 +28,8 @@ data_path = "./"
 # file = input("Desired file name? ") # enter velocityfld_ascii.dat for demo.
 file = "velocityfld_ascii.dat"
 # file = "../DHIT-Flow-Setup/outputs/p5nel4modes4/velocity_equidistant_nodes.fld"
-file = "../DHIT-Flow-Setup/outputs/p5nel4modes31/velocity.fld"
+# file = "../DHIT-Flow-Setup/outputs/p5nel4modes31/velocity.fld"
+file = "../DHIT-Flow-Setup/dofs128_p3_velocity/velocity_equidistant_nodes.fld"
 specfile = "../DHIT-Flow-Setup/outputs/p5nel4modes31/spec.tec"
 
 # -----------------------------------------------------------------
