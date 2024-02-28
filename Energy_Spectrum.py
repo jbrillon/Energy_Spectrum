@@ -164,6 +164,8 @@ def compute_Ek_spectrum(velocity_field=[],reference_velocity=1.0):
     # dataout[:,0] = np.arange(0,len(dataout))
     # dataout[:,1] = EK_avsphr[0:len(dataout)]
 
+    realsize = len(EK_avsphr)
+
     return [np.arange(0,realsize),EK_avsphr[0:realsize]]
     # np.savetxt("computed_spectra.txt",dataout)
 
